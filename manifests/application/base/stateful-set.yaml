@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: stateful-set
+spec:
+  serviceName: service
+  template:
+    spec:
+      containers:
+      - name: manager
+        command:
+        - /root/manager
+        image: registry.cn-shenzhen.aliyuncs.com/shikanon/kubeflow-images-public.kubernetes-sigs.application
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: project
+          value: $(project)
+      serviceAccountName: service-account
+  volumeClaimTemplates: []

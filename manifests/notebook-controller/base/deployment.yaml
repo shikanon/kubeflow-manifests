@@ -1,0 +1,19 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: manager
+        image: registry.cn-shenzhen.aliyuncs.com/shikanon/kubeflow-images-public.notebook-controller:v20190603-v0-175-geeca4530-e3b0c4
+        command:
+          - /manager
+        env:
+          - name: USE_ISTIO
+            value: "false"
+          - name: POD_LABELS
+            value: $(POD_LABELS)
+        imagePullPolicy: IfNotPresent
+      serviceAccountName: service-account

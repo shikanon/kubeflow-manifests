@@ -1,0 +1,24 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: ui
+  labels:
+    app: metadata-ui
+spec:
+  selector:
+    matchLabels:
+      app: metadata-ui
+  template:
+    metadata:
+      name: ui
+      labels:
+        app: metadata-ui
+    spec:
+      containers:
+      - image: registry.cn-shenzhen.aliyuncs.com/shikanon/kubeflow-images-public.metadata-frontend:v0.1.8
+        imagePullPolicy: IfNotPresent
+        name: metadata-ui
+        ports:
+        - containerPort: 3000
+      serviceAccountName: ui
+
