@@ -84,7 +84,7 @@ kind: StorageClass
 metadata:
   name: local-path
   annotations: #添加为默认StorageClass
-  storageclass.beta.kubernetes.io/is-default-class: "true"
+    storageclass.beta.kubernetes.io/is-default-class: "true"
 provisioner: rancher.io/local-path
 volumeBindingMode: WaitForFirstConsumer
 reclaimPolicy: Delete
