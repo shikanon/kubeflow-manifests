@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: katib-suggestion-bayesianoptimization
-        image: registry.cn-shenzhen.aliyuncs.com/shikanon/kubeflow-images-public.katib.v1alpha2.suggestion-bayesianoptimization:v0.6.0-rc.0
+        image: registry.cn-shenzhen.aliyuncs.com/shikanon/kubeflow-images-public.katib.suggestion-bayesianoptimization:v0.6.0-rc.0
         imagePullPolicy: IfNotPresent
         ports:
         - name: api

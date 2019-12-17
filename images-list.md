@@ -40,7 +40,7 @@ ali_image = [
 "registry.cn-shenzhen.aliyuncs.com/shikanon/kubeflow-images-public.katib.v1alpha2.katib-controller:v0.6.0-rc.0",
 "registry.cn-shenzhen.aliyuncs.com/shikanon/kubeflow-images-public.katib.v1alpha2.katib-manager:v0.6.0-rc.0",
 "registry.cn-shenzhen.aliyuncs.com/shikanon/kubeflow-images-public.katib.v1alpha2.katib-manager-rest:v0.6.0-rc.0",
-"registry.cn-shenzhen.aliyuncs.com/shikanon/kubeflow-images-public.katib.v1alpha2.suggestion-bayesianoptimization:v0.6.0-rc.0",
+"registry.cn-shenzhen.aliyuncs.com/shikanon/kubeflow-images-public.katib.suggestion-bayesianoptimization:v0.6.0-rc.0",
 "registry.cn-shenzhen.aliyuncs.com/shikanon/kubeflow-images-public.katib.v1alpha2.suggestion-grid:v0.6.0-rc.0",
 "registry.cn-shenzhen.aliyuncs.com/shikanon/kubeflow-images-public.katib.v1alpha2.suggestion-hyperband:v0.6.0-rc.0",
 "registry.cn-shenzhen.aliyuncs.com/shikanon/kubeflow-images-public.katib.v1alpha2.suggestion-nasrl:v0.6.0-rc.0",
