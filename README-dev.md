@@ -38,3 +38,6 @@ patch文件主要针对官方yaml安装使用过程中的一些问题打的补�
 主要是由于jupyter-web-app的安全验证策略导致的，详细见https://github.com/kubeflow/kubeflow/issues/5803
 解决方案环境变量加上`APP_SECURE_COOKIES=false`,修改见`jupyter-web-app.yaml`
 
+### 解决docker.sock not found 问题
+
+因为 kind 使用的 containerd 作为容器运行时，而 argo workflow 默认 Workflow Executors使用的是 docker ，他会尝试挂载宿主机的 `docker.sock`，如果不存在就会报错，这里尝试将`workflow-controller-configmap`的`containerRuntimeExecutor` 改为 `k8sapi` 更换 Workflow Executors 来解决。详细见：https://argoproj.github.io/argo-workflows/workflow-executors/
