@@ -76,7 +76,11 @@ xgboost-operator-deployment-5c7bfd57cc-9rtq6                2/2     Running   1 
 全部pod running后，可以访问本地的30000端口（istio-ingressgateway设置了nodeport为30000端口），就可以看到登录界面了：
 ![](/example/dex登录界面.png)
 
-输入账号密码即可登录，这里的账号密码可以通过`patch/auth.yaml`进行更改，默认的用户名是`admin@example.com`，密码是`password`
+输入账号密码即可登录，这里的账号密码可以通过`patch/auth.yaml`进行更改。
+默认的用户名是`admin@example.com`，密码是`password`
+
+登录后进入kubeflow界面：
+![](/example/kubeflow-dashboardcenter.png)
 
 ### 删除
 
