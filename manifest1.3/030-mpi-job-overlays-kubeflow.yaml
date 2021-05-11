@@ -1,0 +1,410 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    app: mpi-operator
+    app.kubernetes.io/component: mpijob
+    app.kubernetes.io/name: mpi-operator
+    kustomize.component: mpi-operator
+  name: mpijobs.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: MPIJob
+    plural: mpijobs
+    shortNames:
+    - mj
+    - mpij
+    singular: mpijob
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            description: Only one of gpus, processingUnits, or replicas should be specified
+            oneOf:
+            - properties:
+                gpus:
+                  description: Valid values are 1, 2, 4, or any multiple of 8
+                  oneOf:
+                  - enum:
+                    - 1
+                    - 2
+                    - 4
+                    type: integer
+                  - minimum: 8
+                    multipleOf: 8
+                    type: integer
+                  title: Total number of GPUs
+                gpusPerNode:
+                  description: Defaults to the number of GPUs per worker
+                  minimum: 1
+                  title: The maximum number of GPUs available per node
+                  type: integer
+                slotsPerWorker:
+                  description: Defaults to the number of processing units per worker
+                  minimum: 1
+                  title: The number of slots per worker used in hostfile
+                  type: integer
+              required:
+              - gpus
+            - properties:
+                processingResourceType:
+                  description: Defaults to 'nvidia.com/gpu'
+                  enum:
+                  - nvidia.com/gpu
+                  - cpu
+                  title: The processing resource type, e.g. 'nvidia.com/gpu' or 'cpu'
+                  type: string
+                processingUnits:
+                  description: Valid values are 1, 2, 4, or any multiple of 8
+                  oneOf:
+                  - enum:
+                    - 1
+                    - 2
+                    - 4
+                    type: integer
+                  - minimum: 8
+                    multipleOf: 8
+                    type: integer
+                  title: Total number of processing units
+                processingUnitsPerNode:
+                  description: Defaults to the number of processing units per worker
+                  minimum: 1
+                  title: The maximum number of processing units available per node
+                  type: integer
+                slotsPerWorker:
+                  description: Defaults to the number of processing units per worker
+                  minimum: 1
+                  title: The number of slots per worker used in hostfile
+                  type: integer
+              required:
+              - processingUnits
+            - properties:
+                processingResourceType:
+                  description: Defaults to 'nvidia.com/gpu'
+                  enum:
+                  - nvidia.com/gpu
+                  - cpu
+                  title: The processing resource type, e.g. 'nvidia.com/gpu' or 'cpu'
+                  type: string
+                replicas:
+                  description: The processing resource limit should be specified for each replica
+                  minimum: 1
+                  title: Total number of replicas
+                  type: integer
+                slotsPerWorker:
+                  description: Defaults to the number of processing units per worker
+                  minimum: 1
+                  title: The number of slots per worker used in hostfile
+                  type: integer
+              required:
+              - replicas
+            title: The MPIJob spec
+    served: false
+    storage: false
+  - name: v1alpha2
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              mpiReplicaSpecs:
+                properties:
+                  Launcher:
+                    properties:
+                      replicas:
+                        maximum: 1
+                        minimum: 1
+                        type: integer
+                  Worker:
+                    properties:
+                      replicas:
+                        minimum: 1
+                        type: integer
+              slotsPerWorker:
+                minimum: 1
+                type: integer
+    served: true
+    storage: false
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              mpiReplicaSpecs:
+                properties:
+                  Launcher:
+                    properties:
+                      replicas:
+                        maximum: 1
+                        minimum: 1
+                        type: integer
+                  Worker:
+                    properties:
+                      replicas:
+                        minimum: 1
+                        type: integer
+              slotsPerWorker:
+                minimum: 1
+                type: integer
+    served: true
+    storage: true
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: mpi-operator
+    app.kubernetes.io/component: mpijob
+    app.kubernetes.io/name: mpi-operator
+    kustomize.component: mpi-operator
+  name: mpi-operator
+  namespace: kubeflow
+---
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-mpijobs-admin: "true"
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: mpi-operator
+    app.kubernetes.io/component: mpijob
+    app.kubernetes.io/name: mpi-operator
+    kustomize.component: mpi-operator
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+  name: kubeflow-mpijobs-admin
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: mpi-operator
+    app.kubernetes.io/component: mpijob
+    app.kubernetes.io/name: mpi-operator
+    kustomize.component: mpi-operator
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-mpijobs-admin: "true"
+  name: kubeflow-mpijobs-edit
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - mpijobs
+  - mpijobs/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: mpi-operator
+    app.kubernetes.io/component: mpijob
+    app.kubernetes.io/name: mpi-operator
+    kustomize.component: mpi-operator
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+  name: kubeflow-mpijobs-view
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - mpijobs
+  - mpijobs/status
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: mpi-operator
+    app.kubernetes.io/component: mpijob
+    app.kubernetes.io/name: mpi-operator
+    kustomize.component: mpi-operator
+  name: mpi-operator
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - serviceaccounts
+  verbs:
+  - create
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - endpoints
+  verbs:
+  - create
+  - get
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  - rolebindings
+  verbs:
+  - create
+  - list
+  - watch
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - create
+  - list
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - create
+  - list
+  - update
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - create
+  - list
+  - update
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - create
+  - get
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - mpijobs
+  - mpijobs/finalizers
+  - mpijobs/status
+  verbs:
+  - '*'
+- apiGroups:
+  - scheduling.incubator.k8s.io
+  - scheduling.sigs.dev
+  resources:
+  - queues
+  - podgroups
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: mpi-operator
+    app.kubernetes.io/component: mpijob
+    app.kubernetes.io/name: mpi-operator
+    kustomize.component: mpi-operator
+  name: mpi-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: mpi-operator
+subjects:
+- kind: ServiceAccount
+  name: mpi-operator
+  namespace: kubeflow
+---
+apiVersion: v1
+data:
+  kubectl-delivery-image: mpioperator/kubectl-delivery:latest
+  lock-namespace: kubeflow
+kind: ConfigMap
+metadata:
+  labels:
+    app: mpi-operator
+    app.kubernetes.io/component: mpijob
+    app.kubernetes.io/name: mpi-operator
+    kustomize.component: mpi-operator
+  name: mpi-operator-config
+  namespace: kubeflow
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mpi-operator
+    app.kubernetes.io/component: mpijob
+    app.kubernetes.io/name: mpi-operator
+    kustomize.component: mpi-operator
+  name: mpi-operator
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mpi-operator
+      app.kubernetes.io/component: mpijob
+      app.kubernetes.io/name: mpi-operator
+      kustomize.component: mpi-operator
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: mpi-operator
+        app.kubernetes.io/component: mpijob
+        app.kubernetes.io/name: mpi-operator
+        kustomize.component: mpi-operator
+    spec:
+      containers:
+      - args:
+        - -alsologtostderr
+        - --lock-namespace
+        - kubeflow
+        - --kubectl-delivery-image
+        - mpioperator/kubectl-delivery:latest
+        image: registry.cn-shenzhen.aliyuncs.com/tensorbytes/mpioperator-mpi-operator:latest-d32b4
+        imagePullPolicy: Always
+        name: mpi-operator
+      serviceAccountName: mpi-operator

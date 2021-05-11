@@ -1,0 +1,250 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    app: mxnet-operator
+    app.kubernetes.io/component: mxnet
+    app.kubernetes.io/name: mxnet-operator
+    kustomize.component: mxnet-operator
+  name: mxjobs.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: MXJob
+    plural: mxjobs
+    singular: mxjob
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      properties:
+        spec:
+          properties:
+            mxReplicaSpecs:
+              properties:
+                Scheduler:
+                  properties:
+                    replicas:
+                      maximum: 1
+                      minimum: 1
+                      type: integer
+                Server:
+                  properties:
+                    replicas:
+                      minimum: 1
+                      type: integer
+                Tuner:
+                  properties:
+                    replicas:
+                      maximum: 1
+                      minimum: 1
+                      type: integer
+                TunerServer:
+                  properties:
+                    replicas:
+                      minimum: 1
+                      type: integer
+                TunerTracker:
+                  properties:
+                    replicas:
+                      maximum: 1
+                      minimum: 1
+                      type: integer
+                Worker:
+                  properties:
+                    replicas:
+                      minimum: 1
+                      type: integer
+  version: v1
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: mxnet-operator
+    app.kubernetes.io/component: mxnet
+    app.kubernetes.io/name: mxnet-operator
+    kustomize.component: mxnet-operator
+  name: mxnet-operator
+  namespace: kubeflow
+---
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-mxjobs-admin: "true"
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: mxnet-operator
+    app.kubernetes.io/component: mxnet
+    app.kubernetes.io/name: mxnet-operator
+    kustomize.component: mxnet-operator
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+  name: kubeflow-mxjobs-admin
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: mxnet-operator
+    app.kubernetes.io/component: mxnet
+    app.kubernetes.io/name: mxnet-operator
+    kustomize.component: mxnet-operator
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-mxjobs-admin: "true"
+  name: kubeflow-mxjobs-edit
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - mxjobs
+  - mxjobs/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: mxnet-operator
+    app.kubernetes.io/component: mxnet
+    app.kubernetes.io/name: mxnet-operator
+    kustomize.component: mxnet-operator
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+  name: kubeflow-mxjobs-view
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - mxjobs
+  - mxjobs/status
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  labels:
+    app: mxnet-operator
+    app.kubernetes.io/component: mxnet
+    app.kubernetes.io/name: mxnet-operator
+    kustomize.component: mxnet-operator
+  name: mxnet-operator
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - mxjobs
+  verbs:
+  - '*'
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - '*'
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - storageclasses
+  verbs:
+  - '*'
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - pods
+  - services
+  - endpoints
+  - persistentvolumeclaims
+  - events
+  verbs:
+  - '*'
+- apiGroups:
+  - apps
+  - extensions
+  resources:
+  - deployments
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: mxnet-operator
+    app.kubernetes.io/component: mxnet
+    app.kubernetes.io/name: mxnet-operator
+    kustomize.component: mxnet-operator
+  name: mxnet-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: mxnet-operator
+subjects:
+- kind: ServiceAccount
+  name: mxnet-operator
+  namespace: kubeflow
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mxnet-operator
+    app.kubernetes.io/component: mxnet
+    app.kubernetes.io/name: mxnet-operator
+    kustomize.component: mxnet-operator
+  name: mxnet-operator
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mxnet-operator
+      app.kubernetes.io/component: mxnet
+      app.kubernetes.io/name: mxnet-operator
+      kustomize.component: mxnet-operator
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: mxnet-operator
+        app.kubernetes.io/component: mxnet
+        app.kubernetes.io/name: mxnet-operator
+        kustomize.component: mxnet-operator
+    spec:
+      containers:
+      - command:
+        - /opt/kubeflow/mxnet-operator.v1
+        env:
+        - name: MY_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        image: registry.cn-shenzhen.aliyuncs.com/tensorbytes/kubeflow-mxnet-operator:v1.1.0-9863e
+        imagePullPolicy: Always
+        name: mxnet-operator
+      serviceAccountName: mxnet-operator

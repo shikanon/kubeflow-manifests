@@ -1,0 +1,50 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jupyter-web-app
+    kustomize.component: jupyter-web-app
+  name: jupyter-web-app-deployment
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jupyter-web-app
+      kustomize.component: jupyter-web-app
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: jupyter-web-app
+        kustomize.component: jupyter-web-app
+    spec:
+      containers:
+      - env:
+        - name: APP_PREFIX
+          value: /jupyter
+        - name: UI
+          value: default
+        - name: USERID_HEADER
+          value: kubeflow-userid
+        - name: USERID_PREFIX
+          value: ""
+        - name: APP_DISABLE_AUTH
+          value: "True"
+          # This gets rid of erro: Could not find CSRF cookie XSRF-TOKEN in the request
+        - name: APP_SECURE_COOKIES
+          value: "False"
+        image: registry.cn-shenzhen.aliyuncs.com/tensorbytes/notebooks-jupyter-web-app:v1.3.0-rc.0-70edb
+        name: jupyter-web-app
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - mountPath: /etc/config
+          name: config-volume
+      serviceAccountName: jupyter-web-app-service-account
+      volumes:
+      - configMap:
+          name: jupyter-web-app-config-tkhtgh5mcm
+        name: config-volume
