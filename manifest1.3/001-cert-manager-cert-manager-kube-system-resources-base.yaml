@@ -1,0 +1,101 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  labels:
+    app: cainjector
+    kustomize.component: cert-manager
+  name: cert-manager-cainjector:leaderelection
+  namespace: kube-system
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - create
+  - update
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  labels:
+    app: cert-manager
+    kustomize.component: cert-manager
+  name: cert-manager:leaderelection
+  namespace: kube-system
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - create
+  - update
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  labels:
+    app: cainjector
+    kustomize.component: cert-manager
+  name: cert-manager-cainjector:leaderelection
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cert-manager-cainjector:leaderelection
+subjects:
+- apiGroup: ""
+  kind: ServiceAccount
+  name: cert-manager-cainjector
+  namespace: cert-manager
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  labels:
+    app: webhook
+    kustomize.component: cert-manager
+  name: cert-manager-webhook:webhook-authentication-reader
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: extension-apiserver-authentication-reader
+subjects:
+- apiGroup: ""
+  kind: ServiceAccount
+  name: cert-manager-webhook
+  namespace: cert-manager
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  labels:
+    app: cert-manager
+    kustomize.component: cert-manager
+  name: cert-manager:leaderelection
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cert-manager:leaderelection
+subjects:
+- apiGroup: ""
+  kind: ServiceAccount
+  name: cert-manager
+  namespace: cert-manager
+---
+apiVersion: v1
+data:
+  certManagerNamespace: cert-manager
+kind: ConfigMap
+metadata:
+  labels:
+    kustomize.component: cert-manager
+  name: cert-manager-kube-params-parameters
+  namespace: kube-system
