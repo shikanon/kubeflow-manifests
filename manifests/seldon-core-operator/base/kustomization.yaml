@@ -1,8 +1,0 @@
-resources:
-- clusterrole.yaml
-- crd.yaml
-- rolebinding.yaml
-- secret.yaml
-- service-account.yaml
-- service.yaml
-- statefulset.yaml
