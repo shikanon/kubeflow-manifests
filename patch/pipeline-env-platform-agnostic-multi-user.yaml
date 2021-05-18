@@ -294,6 +294,77 @@ metadata:
     application-crd-id: kubeflow-pipelines
   name: kubeflow-pipelines-profile-controller-code-c2cd68d9k4
   namespace: kubeflow
+---
+
+apiVersion: v1
+data:
+  appName: pipeline
+  appVersion: 1.5.0-rc.2
+  autoUpdatePipelineDefaultVersion: "true"
+  bucketName: mlpipeline
+  cacheDb: cachedb
+  cacheImage: busybox
+  cronScheduleTimezone: UTC
+  dbHost: mysql
+  dbPort: "3306"
+  mlmdDb: metadb
+  pipelineDb: mlpipeline
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+    application-crd-id: kubeflow-pipelines
+  name: pipeline-install-config
+  namespace: kubeflow
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    application-crd-id: kubeflow-pipelines
+  name: workflow-controller
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: workflow-controller
+      application-crd-id: kubeflow-pipelines
+  template:
+    metadata:
+      labels:
+        app: workflow-controller
+        application-crd-id: kubeflow-pipelines
+    spec:
+      containers:
+      - args:
+        - --configmap
+        - workflow-controller-configmap
+        - --executor-image
+        - registry.cn-shenzhen.aliyuncs.com/tensorbytes/ml-pipeline-argoexec:v2.12.9-license-compliance
+        command:
+        - workflow-controller
+        image: registry.cn-shenzhen.aliyuncs.com/tensorbytes/ml-pipeline-workflow-controller:v2.12.9-license-compliance-2d9c1
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: metrics
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        name: workflow-controller
+        ports:
+        - containerPort: 9090
+          name: metrics
+        resources:
+          requests:
+            cpu: 100m
+            memory: 500Mi
+      nodeSelector:
+        kubernetes.io/os: linux
+      securityContext:
+        runAsNonRoot: true
+      serviceAccountName: argo
 
 ---
 apiVersion: apps/v1
@@ -307,7 +378,7 @@ metadata:
   name: kubeflow-pipelines-profile-controller
   namespace: kubeflow
 spec:
-  replicas: 2
+  replicas: 2 # change replica number
   selector:
     matchLabels:
       app: kubeflow-pipelines-profile-controller
