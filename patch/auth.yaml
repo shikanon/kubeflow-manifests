@@ -17,7 +17,7 @@ data:
     staticPasswords:
     - email: "admin@example.com"
       # hash string is "password"
-      hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"
+      hash: "$2y$12$X.oNHMsIfRSq35eRfiTYV.dPIYlWyPDRRc1.JVp0f3c.YqqJNW4uK"
       # https://github.com/dexidp/dex/pull/1601/commits
       # FIXME: Use hashFromEnv instead
       username: "admin"
