@@ -6,7 +6,15 @@
 ## 安装步骤
 
 ### 安装k8s
-**安装kind集群**
+
+如果已经有k8s集群，这一步可以跳过
+
+**kind安装k8s集群**
+
+下载[kind工具](https://github.com/kubernetes-sigs/kind/tags)
+
+使用kind安装k8s集群：
+
 ```bash
 $ kind create cluster --config=kind/kind-config.yaml --name=kubeflow --image=kindest/node:v1.16.9
 ```
