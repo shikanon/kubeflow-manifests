@@ -77,7 +77,7 @@ xgboost-operator-deployment-5c7bfd57cc-9rtq6                2/2     Running   1 
 ![](/example/dex登录界面.png)
 
 输入账号密码即可登录，这里的账号密码可以通过`patch/auth.yaml`进行更改。
-默认的用户名是`admin@example.com`，密码是`password`
+默认的用户名是`user@example.com`，密码是`12341234`
 
 登录后进入kubeflow界面：
 ![](/example/kubeflow-dashboardcenter.png)
