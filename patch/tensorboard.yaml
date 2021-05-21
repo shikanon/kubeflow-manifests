@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: tensorboards-web-app
+    kustomize.component: tensorboards-web-app
+  name: tensorboards-web-app-deployment
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tensorboards-web-app
+      kustomize.component: tensorboards-web-app
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: tensorboards-web-app
+        kustomize.component: tensorboards-web-app
+    spec:
+      containers:
+      - env:
+        - name: APP_PREFIX
+          value: /tensorboards
+        - name: USERID_HEADER
+          value: kubeflow-userid
+        - name: USERID_PREFIX
+          value: ""
+        - name: APP_SECURE_COOKIES
+          value: "False"
+        image: registry.cn-shenzhen.aliyuncs.com/tensorbytes/notebooks-tensorboards-web-app:v1.3.0-rc.0-258dd
+        name: tensorboards-web-app
+        ports:
+        - containerPort: 5000
+      serviceAccountName: tensorboards-web-app-service-account

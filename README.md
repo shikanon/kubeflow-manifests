@@ -1,12 +1,20 @@
-# Kubeflow一键安装
+# Kubeflow安装及使用教程（中国版）
 
-国内由于镜像网络问题，Kubeflow 通常安装都是各种磕磕碰碰，以一颗为广大人民谋福利的心，这里提供国内镜像版(阿里云镜像/dockerhub)的**本地**一键安装：
+国内由于镜像网络问题，Kubeflow 通常安装都是各种磕磕碰碰，以一颗为广大人民谋福利的心，这里提供中国的本地镜像版(阿里云镜像/dockerhub)的**一键安装**：
 
 
 ## 安装步骤
 
 ### 安装k8s
-**安装kind集群**
+
+如果已经有k8s集群，这一步可以跳过
+
+**kind安装k8s集群**
+
+下载[kind工具](https://github.com/kubernetes-sigs/kind/tags)
+
+使用kind安装k8s集群：
+
 ```bash
 $ kind create cluster --config=kind/kind-config.yaml --name=kubeflow --image=kindest/node:v1.16.9
 ```
@@ -87,3 +95,5 @@ xgboost-operator-deployment-5c7bfd57cc-9rtq6                2/2     Running   1 
 ```bash
  kind delete cluster --name kubeflow
 ```
+
+## Kubeflow使用教程
