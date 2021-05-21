@@ -1,13 +1,17 @@
 # Kubeflow安装及使用教程（中国版）
 
-国内由于镜像网络问题，Kubeflow 通常安装都是各种磕磕碰碰，以一颗为广大人民谋福利的心，这里提供中国的本地镜像版(阿里云镜像/dockerhub)的**一键安装**：
+由于国内网络问题，Kubeflow 通常安装都是各种磕磕碰碰，以一颗为广大人民谋福利的心，这里提供中国的本地镜像版(阿里云镜像/dockerhub)的**安装**。
+同时这里汇总了一些kubeflow的中文教程资料供大家参考。
 
+## Kubeflow 使用教程
+- [kubeflow安装](/README.md)
+- [kubeflow各组件介绍](/docs/introduction.md)
 
 ## 安装步骤
 
 ### 安装k8s
 
-如果已经有k8s集群，这一步可以跳过
+如果已经有k8s集群，这一步可以跳过，直接到[kubeflow安装](https://github.com/shikanon/kubeflow-manifests#%E5%AE%89%E8%A3%85kubeflow)。
 
 **kind安装k8s集群**
 
@@ -90,10 +94,9 @@ xgboost-operator-deployment-5c7bfd57cc-9rtq6                2/2     Running   1 
 登录后进入kubeflow界面：
 ![](/example/kubeflow-dashboardcenter.png)
 
-### 删除
+### 删除kubeflow资源
 
 ```bash
  kind delete cluster --name kubeflow
 ```
 
-## Kubeflow使用教程
