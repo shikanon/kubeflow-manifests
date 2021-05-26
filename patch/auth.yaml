@@ -18,8 +18,6 @@ data:
     - email: "admin@example.com"
       # hash string is "password"
       hash: "$2y$12$X.oNHMsIfRSq35eRfiTYV.dPIYlWyPDRRc1.JVp0f3c.YqqJNW4uK"
-      # https://github.com/dexidp/dex/pull/1601/commits
-      # FIXME: Use hashFromEnv instead
       username: "admin"
       userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
     staticClients:
@@ -32,6 +30,48 @@ kind: ConfigMap
 metadata:
   name: dex
   namespace: auth
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dex
+  name: dex
+  namespace: auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dex
+  template:
+    metadata:
+      labels:
+        app: dex
+    spec:
+      containers:
+      - command:
+        - dex
+        - serve
+        - /etc/dex/cfg/config.yaml
+        envFrom:
+        - secretRef:
+            name: dex-oidc-client
+        image: registry.cn-shenzhen.aliyuncs.com/tensorbytes/dexidp-dex:v2.24.0-bb0b9
+        name: dex
+        ports:
+        - containerPort: 5556
+          name: http
+        volumeMounts:
+        - mountPath: /etc/dex/cfg
+          name: config
+      serviceAccountName: dex
+      volumes:
+      - configMap:
+          items:
+          - key: config.yaml
+            path: config.yaml
+          name: dex
+        name: config
 ---
 apiVersion: v1
 data:
