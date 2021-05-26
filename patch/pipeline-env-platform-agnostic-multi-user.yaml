@@ -378,7 +378,7 @@ metadata:
   name: kubeflow-pipelines-profile-controller
   namespace: kubeflow
 spec:
-  replicas: 2 # change replica number
+  replicas: 1 # change replica number
   selector:
     matchLabels:
       app: kubeflow-pipelines-profile-controller
