@@ -7,6 +7,7 @@ import time
 
 def install(path):
     for root,path,files in os.walk(path):
+        files = sorted(files)
         for f in files:
             installfile = root + "/" + f
             cmd = "kubectl apply -f {installfile}".format(installfile=installfile)
@@ -14,7 +15,7 @@ def install(path):
             p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
             out = p.stdout.read()
             print(out)
-            time.sleep(1)
+            time.sleep(10)
 
 '''
 因为一些patch安装涉及到的一些修改需要重启pod，所以先删除再安装
@@ -22,6 +23,7 @@ def install(path):
 def patchInstall(path):
     print("start to patch...")
     for root,path,files in os.walk(path):
+        files = sorted(files)
         for f in files:
             installfile = root + "/" + f
             cmd_delete = "kubectl delete -f {installfile}".format(installfile=installfile)
