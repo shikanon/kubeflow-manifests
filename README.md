@@ -84,6 +84,7 @@ xgboost-operator-deployment-5c7bfd57cc-9rtq6                2/2     Running   1 
 如果所有pod 都running了表示安装完了。
 
 *注：除了kubeflow命名空间，该一键安装工具也会安装istio,knative,因此也要保证这两个命名空间下的服务全部running*
+*如果你的mysql没启动成功，可以运行kubectl apply -f database-patch/mysql-persistent-storage.yaml*
 
 全部pod running后，可以访问本地的30000端口（istio-ingressgateway设置了nodeport为30000端口），就可以看到登录界面了：
 ![](/example/dex登录界面.png)
