@@ -6,6 +6,7 @@
 ## Kubeflow 使用教程
 - [kubeflow安装](/README.md)
 - [kubeflow各组件介绍](/docs/introduction.md)
+- [问题汇总](/docs/problems.md)
 
 ## 安装步骤
 
