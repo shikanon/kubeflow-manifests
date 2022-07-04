@@ -21,7 +21,7 @@
 使用kind安装k8s集群：
 
 ```bash
-$ kind create cluster --config=kind/kind-config.yaml --name=kubeflow --image=kindest/node:v1.16.9
+$ kind create cluster --config=kind/kind-config.yaml --name=kubeflow --image=kindest/node:v1.16.15
 ```
 
 启动成功后可以看到开了一个30000端口：
