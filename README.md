@@ -102,3 +102,7 @@ xgboost-operator-deployment-5c7bfd57cc-9rtq6                2/2     Running   1 
  kind delete cluster --name kubeflow
 ```
 
+**如果不希望流量鉴权，可以把istio的authorizationpolicies全部删除**
+```bash
+kubectl delete authorizationpolicies --all -A
+```
